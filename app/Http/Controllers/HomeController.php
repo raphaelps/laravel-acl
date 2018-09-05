@@ -24,8 +24,8 @@ class HomeController extends Controller
      */
     public function index(Noticia $noticia)
     {
-        //$noticias = $noticia->all();
-        $noticias = $noticia->where('user_id',auth()->user()->id)->get();
+        $noticias = $noticia->all();
+        //$noticias = $noticia->where('user_id',auth()->user()->id)->get();
 
         return view('home', compact('noticias'));
     }
@@ -34,6 +34,12 @@ class HomeController extends Controller
     {
         $noticia = Noticia::find($idNoticia);
 
-            return view('updade-noticia', compact('noticia'));
+        //$this->authorize('update-noticia', $noticia);
+        if (Gate::denies('update-noticia', $noticia)) {
+            abort(403, 'Voce não tem autorização para executar este procedimento');
+            // The current user can't update the post...
+        }
+
+        return view('update-noticia', compact('noticia'));
     }
 }
